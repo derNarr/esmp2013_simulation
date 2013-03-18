@@ -35,7 +35,8 @@ sigma=0.3
 def drift_rate(y, free_energy):
     pass
 
-def free_energy():
+def free_energy(y):
+    # some important code
     pass
 
 sqrtdt = math.sqrt(dt)

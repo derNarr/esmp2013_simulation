@@ -12,42 +12,114 @@
 # output: --
 #
 # created 2013-03-18 KS
-# last mod 2013-03-18 23:05 KS
+# last mod 2013-03-19 16:23 KS
 
-import numpy as np
-import matplotlib.pyplot as plt
+"""
+
+Todo
+----
+* calculate ground state
+
+"""
+
+from __future__ import division
+
+import functools
 import math
 import random
 
-tBegin=0
-tEnd=2
-dt=.00001
+import numpy as np
+import matplotlib.pyplot as plt
 
-t = np.arange(tBegin, tEnd, dt)
-N = t.size
-IC=0
+import free_energy
+
+def initiate_deriv_free_energy():
+    """
+    Defining specific free energy functions...
+
+    Returns
+    -------
+    Returns function that accepts ys and beta and returns the evaluation of the
+    first partial derivatives.
+
+    """
+    param = {"Wplus1": 1,
+             "Wplus2": 1,
+             "Wplus3": 1,
+             "Wminus12": 1,
+             "Wminus13": 1,
+             "Wminus23": 1,
+             "B1": 1,
+             "B2": 1,
+             "B3": 1,
+             "THETA1": 1,
+             "THETA2": 1,
+             "THETA3": 1,
+             "N1": 1,
+             "N2": 1,
+             "N3": 1}
+    derivs = [func.subs(param) for func in free_energy.deriv_free_energy]
+    def deriv_free_energy(ys, beta):
+        """
+        .. warning:
+            only works if len(ys) is 3
+
+        """
+        y1, y2, y3 = ys
+        ans = [deriv.subs({"y1": y1, "y2": y2, "y3": y3, "beta": beta}) for
+               deriv in derivs]
+        return np.array(ans)
+
+    return deriv_free_energy
+
+def drift_rate(y, dfe, beta, D):
+    r"""
+    is in the direction of the vector of attraction.
+
+    ..math:
+        -\beta D \frac{\partial F(y)}{\partial y}
+
+    Parameters
+    ----------
+    y : position
+    deriv_free_energy : function
+        function that takes the position and returns a vector with.
+        (dF/dy_1, dF/dy_2, dF/dy_3...)
+    """
+    return -beta * D * dfe(y, beta)
+
+
+# time drift parameters
+t_begin=0
+t_end=2
+#dt=.00001
+dt=.1
+
+t = np.arange(t_begin, t_end, dt)
+Nt = t.size
 theta=1
 mu=1.2
 sigma=0.3
 
-# calculate ground state
-
-def drift_rate(y, free_energy):
-    pass
-
-def free_energy(y):
-    # some important code
-    pass
-
+dfe = initiate_deriv_free_energy()
+drate1 = functools.partial(drift_rate,
+        dfe=dfe, beta=1/24, D=1)
 sqrtdt = math.sqrt(dt)
-y = np.zeros(N)
-y[0] = IC
-for i in xrange(1,N):
-    y[i] = y[i-1] + dt*drift_rate(y[i], free_energy) + sigma*sqrtdt*random.gauss(0,1)
+y = np.zeros((Nt, 3))
+
+y[0] = np.array((0.1, 0.2, 0.3))
+for i in xrange(1,Nt):
+    y[i] = (y[i-1] + dt*drate1(y[i-1]) +
+            sigma*sqrtdt*np.array((random.gauss(0,1),
+                                  random.gauss(0,1),
+                                  random.gauss(0,1))))
     # did I cross one of the hyperplanes
     # store response
     # store RT
 
 ax = plt.subplot(111)
-ax.plot(t,y)
+ax.plot(t,y[:,0], "r-")
+ax.plot(t,y[:,1], "g-")
+ax.plot(t,y[:,2], "b-")
 plt.show()
+

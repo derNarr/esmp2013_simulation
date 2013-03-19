@@ -12,12 +12,13 @@
 # output: --
 #
 # created 2013-03-19 KS
-# last mod 2013-03-19 15:29 KS
+# last mod 2013-03-19 15:40 KS
 
 """
 Defining and providing the free energy function and its derivatives.
 
 """
+from __future__ import division
 
 import sympy
 

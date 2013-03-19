@@ -12,7 +12,7 @@
 # output: --
 #
 # created 2013-03-18 KS
-# last mod 2013-03-19 17:41 KS
+# last mod 2013-03-19 18:16 KS
 
 """
 
@@ -137,16 +137,42 @@ def simulate(y_start, t_begin=0, t_end=2, dt=.1):
 
 def plot(ys):
     """
-    make a nice 3D plot for ys.
+    make a nice 3D plot for ys as a line.
 
     """
     fig = plt.figure()
     ax = fig.gca(projection='3d')
     ax.plot(ys[:,0], ys[:,1], ys[:,2])
+    ax.set_xlim3d(0, 1)
+    ax.set_ylim3d(0, 1)
+    ax.set_zlim3d(0, 1)
+    plt.show()
+
+def plot_scatter(ys):
+    """
+    make a nice 3D plot for ys as a scatter plot.
+
+    """
+    fig = plt.figure()
+    ax = fig.gca(projection='3d')
+    ax.scatter(ys[:,0], ys[:,1], ys[:,2])
+    ax.set_xlim3d(0, 1)
+    ax.set_ylim3d(0, 1)
+    ax.set_zlim3d(0, 1)
     plt.show()
 
 
 if __name__ == "__main__":
-    y = simulate((0.1, 0.2, 0.3), t_begin=0, t_end=2, dt=.1)
-    plot(y)
+    n = 3j
+    y1, y2, y3 = np.mgrid[0.1:0.9:n, 0.1:0.9:n, 0.1:0.9:n]
+    starting_yy1 = y1.flatten()
+    starting_yy2 = y2.flatten()
+    starting_yy3 = y3.flatten()
+    final_y = list()
+    for i in range(len(starting_yy1)):
+        y = simulate((starting_yy1[i], starting_yy2[i], starting_yy3[i]),
+                     t_begin=0, t_end=2, dt=.1)
+        final_y.append(y[-1])
+    final_y = np.array(final_y)
+    plot_scatter(final_y)
 

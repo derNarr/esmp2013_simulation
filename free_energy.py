@@ -12,7 +12,7 @@
 # output: --
 #
 # created 2013-03-19 KS
-# last mod 2013-03-19 15:40 KS
+# last mod 2013-03-19 21:04 KS
 
 """
 Defining and providing the free energy function and its derivatives.
@@ -38,7 +38,7 @@ def create_free_energy():
 
     F_IDM = (-Wplus1*y1**2 - Wplus2*y2**2 - Wplus3*y3**2
             + Wminus12*y1*y2 + Wminus13*y1*y3 + Wminus23*y2*y3
-            + (B1 - THETA1)*y1 + (B2 - THETA2)*y2 + (B3 - THETA3)*y3
+            - (B1 - THETA1)*y1 - (B2 - THETA2)*y2 - (B3 - THETA3)*y3
             + 1/beta * (N1*(y1*sympy.log(y1) + (1-y1)*sympy.log(1-y1))
                         + N2*(y2*sympy.log(y2) + (1-y2)*sympy.log(1-y2))
                         + N3*(y3*sympy.log(y3) + (1-y3)*sympy.log(1-y3))))

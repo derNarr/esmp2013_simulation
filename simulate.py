@@ -12,7 +12,7 @@
 # output: --
 #
 # created 2013-03-18 KS
-# last mod 2013-03-19 17:33 KS
+# last mod 2013-03-19 17:41 KS
 
 """
 
@@ -30,6 +30,7 @@ import random
 
 import numpy as np
 import matplotlib.pyplot as plt
+from mpl_toolkits.mplot3d import Axes3D
 
 import free_energy
 
@@ -134,11 +135,18 @@ def simulate(y_start, t_begin=0, t_end=2, dt=.1):
         # store RT
     return y
 
-y = simulate((0.1, 0.2, 0.3), t_begin=0, t_end=2, dt=.1)
+def plot(ys):
+    """
+    make a nice 3D plot for ys.
 
-ax = plt.subplot(111)
-ax.plot(range(len(y)), y[:,0], "r-")
-ax.plot(range(len(y)), y[:,1], "g-")
-ax.plot(range(len(y)), y[:,2], "b-")
-plt.show()
+    """
+    fig = plt.figure()
+    ax = fig.gca(projection='3d')
+    ax.plot(ys[:,0], ys[:,1], ys[:,2])
+    plt.show()
+
+
+if __name__ == "__main__":
+    y = simulate((0.1, 0.2, 0.3), t_begin=0, t_end=2, dt=.1)
+    plot(y)
 

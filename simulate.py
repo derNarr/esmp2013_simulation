@@ -12,7 +12,7 @@
 # output: --
 #
 # created 2013-03-18 KS
-# last mod 2013-03-19 16:23 KS
+# last mod 2013-03-19 17:33 KS
 
 """
 
@@ -85,41 +85,60 @@ def drift_rate(y, dfe, beta, D):
     deriv_free_energy : function
         function that takes the position and returns a vector with.
         (dF/dy_1, dF/dy_2, dF/dy_3...)
+
     """
     return -beta * D * dfe(y, beta)
 
 
-# time drift parameters
-t_begin=0
-t_end=2
-#dt=.00001
-dt=.1
+def simulate(y_start, t_begin=0, t_end=2, dt=.1):
+    """
+    simulates y_start for a given time interval.
 
-t = np.arange(t_begin, t_end, dt)
-Nt = t.size
-theta=1
-mu=1.2
-sigma=0.3
+    Parameters
+    ----------
+    y_start : np.array
+        the starting point
+    t_begin : float
+    t_end : float
+    dt : float
+        time step size
 
-dfe = initiate_deriv_free_energy()
-drate1 = functools.partial(drift_rate,
-        dfe=dfe, beta=1/24, D=1)
-sqrtdt = math.sqrt(dt)
-y = np.zeros((Nt, 3))
+    Returns
+    -------
+    ys : np.array
+        the ys array has shape (Nt, 3)
 
-y[0] = np.array((0.1, 0.2, 0.3))
-for i in xrange(1,Nt):
-    y[i] = (y[i-1] + dt*drate1(y[i-1]) +
-            sigma*sqrtdt*np.array((random.gauss(0,1),
-                                  random.gauss(0,1),
-                                  random.gauss(0,1))))
-    # did I cross one of the hyperplanes
-    # store response
-    # store RT
+    """
+    # time drift parameters
+    #dt=.00001
+    t = np.arange(t_begin, t_end, dt)
+    Nt = t.size
+    #theta=1
+    #mu=1.2
+    sigma=0.3
+
+    dfe = initiate_deriv_free_energy()
+    drate1 = functools.partial(drift_rate,
+            dfe=dfe, beta=1/24, D=1)
+    sqrtdt = math.sqrt(dt)
+    y = np.zeros((Nt, 3))
+
+    y[0] = np.array(y_start)
+    for i in xrange(1,Nt):
+        y[i] = (y[i-1] + dt*drate1(y[i-1]) +
+                sigma*sqrtdt*np.array((random.gauss(0,1),
+                                    random.gauss(0,1),
+                                    random.gauss(0,1))))
+        # did I cross one of the hyperplanes
+        # store response
+        # store RT
+    return y
+
+y = simulate((0.1, 0.2, 0.3), t_begin=0, t_end=2, dt=.1)
 
 ax = plt.subplot(111)
-ax.plot(t,y[:,0], "r-")
-ax.plot(t,y[:,1], "g-")
-ax.plot(t,y[:,2], "b-")
+ax.plot(range(len(y)), y[:,0], "r-")
+ax.plot(range(len(y)), y[:,1], "g-")
+ax.plot(range(len(y)), y[:,2], "b-")
 plt.show()
 

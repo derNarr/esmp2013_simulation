@@ -12,7 +12,13 @@
 # output: --
 #
 # created 2013-03-19 KS
-# last mod 2013-03-19 22:04 KS
+# last mod 2013-03-20 09:10 KS
+
+"""
+Script to calculate minima on the free energy hyperplane with some
+deterministic fast algorithms.
+
+"""
 
 from __future__ import division
 
@@ -21,8 +27,7 @@ import numpy as np
 import sympy
 
 from free_energy import free_energy
-from simulate import plot_scatter
-
+from helper import plot_scatter
 
 
 param = {"Wplus1": 52000,
@@ -81,7 +86,7 @@ for starting in starting_values:
     x.append(res["x"])
     results.append(res)
 
-y = np.array(x)
+yy = np.array(x)
 print("\n\nPlot is ready!")
-plot_scatter(y)
+plot_scatter(yy)
 

@@ -12,9 +12,10 @@
 # output: --
 #
 # created 2013-03-18 KS
-# last mod 2013-03-19 23:09 KS
+# last mod 2013-03-20 09:07 KS
 
 """
+Simulate a 3D Ising decision model (IDM).
 
 Todo
 ----
@@ -29,10 +30,9 @@ import math
 import random
 
 import numpy as np
-import matplotlib.pyplot as plt
-from mpl_toolkits.mplot3d import Axes3D
 
 import free_energy
+from helper import plot_scatter
 
 def initiate_deriv_free_energy():
     """
@@ -127,7 +127,7 @@ def simulate(y_start, t_begin=0.0, t_end=0.002, dt=.0001):
     D = 2*sigma**2/dt2
 
     dfe = initiate_deriv_free_energy()
-    Bs = (8000, 8000, 8000)
+    Bs = (12000, 6000, 6000)
     drate1 = functools.partial(drift_rate, deriv_free_energy=dfe, beta=1/24, D=D)
     sqrtdt = math.sqrt(dt)
     y = np.zeros((Nt, 3))
@@ -161,45 +161,6 @@ def simulate(y_start, t_begin=0.0, t_end=0.002, dt=.0001):
         # store RT
     return y
 
-def plot(ys):
-    """
-    make a nice 3D plot for ys as a line.
-
-    """
-    fig = plt.figure()
-    ax = fig.gca(projection='3d')
-    ax.plot(ys[:,0], ys[:,1], ys[:,2])
-    ax.set_xlim3d(0, 1)
-    ax.set_ylim3d(0, 1)
-    ax.set_zlim3d(0, 1)
-    plt.show()
-
-def plot2(ys, fig):
-    """
-    make a nice 3D plot for ys as a line.
-
-    """
-    ax = fig.gca(projection='3d')
-    ax.plot(ys[:,0], ys[:,1], ys[:,2])
-    ax.set_xlim3d(0, 1)
-    ax.set_ylim3d(0, 1)
-    ax.set_zlim3d(0, 1)
-
-
-def plot_scatter(ys):
-    """
-    make a nice 3D plot for ys as a scatter plot.
-
-    """
-    fig = plt.figure()
-    ax = fig.gca(projection='3d')
-    ax.scatter(ys[:,0], ys[:,1], ys[:,2])
-    ax.set_xlim3d(0, 1)
-    ax.set_ylim3d(0, 1)
-    ax.set_zlim3d(0, 1)
-    plt.show()
-
-
 if __name__ == "__main__":
     n = 2j
     y1, y2, y3 = np.mgrid[0.15:0.17:n, 0.15:0.17:n, 0.15:0.17:n]
@@ -212,5 +173,6 @@ if __name__ == "__main__":
                      t_begin=0.0, t_end=0.02, dt=.0001)
         final_y.append(y)
     final_y = np.array(final_y)
-    #plot_scatter(final_y)
+    end_points = np.array([y[-1] for y in final_y])
+    plot_scatter(end_points)
 

@@ -127,7 +127,7 @@ def simulate(y_start, t_begin=0.0, t_end=0.002, dt=.0001):
     D = 2*sigma**2/dt2
 
     dfe = initiate_deriv_free_energy()
-    Bs = (8000, 10000, 8000)
+    Bs = (8000, 8000, 8200)
     drate1 = functools.partial(drift_rate, deriv_free_energy=dfe, beta=1/24, D=D)
     sqrtdt = math.sqrt(dt)
     y = np.zeros((Nt, 3))
@@ -201,8 +201,8 @@ def plot_scatter(ys):
 
 
 if __name__ == "__main__":
-    n = 2j
-    y1, y2, y3 = np.mgrid[0.15:0.17:n, 0.15:0.17:n, 0.15:0.17:n]
+    n = 3j
+    y1, y2, y3 = np.mgrid[0.1:0.9:n, 0.1:0.9:n, 0.1:0.9:n]
     starting_yy1 = y1.flatten()
     starting_yy2 = y2.flatten()
     starting_yy3 = y3.flatten()
@@ -214,6 +214,11 @@ if __name__ == "__main__":
     final_y = np.array(final_y)
     #plot_scatter(final_y)
     
+    fig = plt.figure()
+    for y in final_y:
+        plot2(y[-25:], fig)
+    plt.show()
+
     fig = plt.figure()
     for y in final_y:
         plot2(y, fig)

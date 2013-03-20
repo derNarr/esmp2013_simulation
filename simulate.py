@@ -12,7 +12,7 @@
 # output: --
 #
 # created 2013-03-18 KS
-# last mod 2013-03-20 09:07 KS
+# last mod 2013-03-20 10:43 KS
 
 """
 Simulate a 3D Ising decision model (IDM).
@@ -30,9 +30,10 @@ import math
 import random
 
 import numpy as np
+import matplotlib.pyplot as plt
 
 import free_energy
-from helper import plot_scatter
+from helper import plot_scatter, plot2
 
 def initiate_deriv_free_energy():
     """
@@ -122,14 +123,14 @@ def simulate(y_start, t_begin=0.0, t_end=0.002, dt=.0001):
     Nt = t.size
     #theta=1
     #mu=1.2
-    sigma=0.15
+    sigma = 0.10
     dt2 = 0.01
     D = 2*sigma**2/dt2
 
     dfe = initiate_deriv_free_energy()
-    Bs = (12000, 6000, 6000)
-    drate1 = functools.partial(drift_rate, deriv_free_energy=dfe, beta=1/24, D=D)
-    sqrtdt = math.sqrt(dt)
+    Bs = (8000, 8000, 8200)
+    drate1 = functools.partial(drift_rate, deriv_free_energy=dfe, beta=1/24, D=D, Bs=Bs)
+    sqrtdt = math.sqrt(dt2)
     y = np.zeros((Nt, 3))
 
     y[0] = np.array(y_start)
@@ -152,7 +153,7 @@ def simulate(y_start, t_begin=0.0, t_end=0.002, dt=.0001):
         if y[i-1][2] >= 1:
             print "WARNING y gets above one"
             y[i-1][2] = 0.9999
-        y[i] = (y[i-1] + dt*drate1(y[i-1], Bs=Bs) +
+        y[i] = (y[i-1] + dt*drate1(y[i-1]) +
                 sigma*sqrtdt*np.array((random.gauss(0,1),
                                     random.gauss(0,1),
                                     random.gauss(0,1))))
@@ -163,6 +164,7 @@ def simulate(y_start, t_begin=0.0, t_end=0.002, dt=.0001):
 
 if __name__ == "__main__":
     n = 2j
+    #y1, y2, y3 = np.mgrid[0.1:0.9:n, 0.1:0.9:n, 0.1:0.9:n]
     y1, y2, y3 = np.mgrid[0.15:0.17:n, 0.15:0.17:n, 0.15:0.17:n]
     starting_yy1 = y1.flatten()
     starting_yy2 = y2.flatten()
@@ -174,5 +176,18 @@ if __name__ == "__main__":
         final_y.append(y)
     final_y = np.array(final_y)
     end_points = np.array([y[-1] for y in final_y])
+    print("Endpoints in the plot.")
     plot_scatter(end_points)
+
+    print("last 25 points in the plot")
+    fig = plt.figure()
+    for y in final_y:
+        plot2(y[-25:], fig)
+    plt.show()
+
+    print("traces in the plot")
+    fig = plt.figure()
+    for y in final_y:
+        plot2(y, fig)
+    plt.show()
 

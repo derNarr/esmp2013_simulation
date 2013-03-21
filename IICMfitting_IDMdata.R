@@ -1,10 +1,10 @@
 setwd("/Users/jwdegee/Desktop/ESMP2013/simulation/esmp2013_simulation/")
-SJ3data <- read.csv("data20130321_1355.csv", header = F)
+SJ3data <- read.csv("data.csv", header = F)
 
 #SOA <- seq(-350,350,50) #15 valori di auditory delay
 #length(SOA)
 
-SJ3data <- rbind(seq(-350,350,50),SJ3data)
+SJ3data <- rbind(seq(-350,350,700/(dim(SJ3data)[2]-1)),SJ3data)
 SJ3data <- as.matrix(SJ3data)
 
 

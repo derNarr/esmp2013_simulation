@@ -98,7 +98,7 @@ def drift_rate(y, deriv_free_energy, beta, D, Bs):
     return -beta * D * deriv_free_energy(y, beta, Bs)
 
 
-def simulate(y_start, t_begin=0.0, t_end=0.002, dt=.0001, Bs=(8000, 8000, 8200)):
+def simulate(y_start, t_begin=0.0, t_end=0.002, dt=.0001, Bs=(8000, 8000, 8200), string_this_B = "B"):
     """
     simulates y_start for a given time interval.
 
@@ -131,7 +131,6 @@ def simulate(y_start, t_begin=0.0, t_end=0.002, dt=.0001, Bs=(8000, 8000, 8200))
     drate1 = functools.partial(drift_rate, deriv_free_energy=dfe, beta=1/24, D=D, Bs=Bs)
     sqrtdt = math.sqrt(dt2)
     y = np.zeros((Nt, 3))
-    res = list()
     
     y[0] = np.array(y_start)
     for i in xrange(1,Nt):
@@ -158,13 +157,13 @@ def simulate(y_start, t_begin=0.0, t_end=0.002, dt=.0001, Bs=(8000, 8000, 8200))
                                     random.gauss(0,1),
                                     random.gauss(0,1))))
         if y[i][0] < 0.3 and y[i][1] < 0.3 and y[i][2] > 0.7:
-            res.append(("plus", i))
+            res = ("plus", string_this_B, i)
             break
         if y[i][0] < 0.3 and y[i][1] > 0.7 and y[i][2] < 0.3:
-            res.append(("equal", i))
+            res = ("equal", string_this_B, i)
             break
         if y[i][0] > 0.7 and y[i][1] < 0.3 and y[i][2] < 0.3:
-            res.append(("minus", i))
+            res = ("minus", string_this_B, i)
             break
     return (res, y)
 

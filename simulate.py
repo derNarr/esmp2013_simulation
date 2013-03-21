@@ -12,7 +12,7 @@
 # output: --
 #
 # created 2013-03-18 KS
-# last mod 2013-03-21 11:48 KS
+# last mod 2013-03-21 21:15 KS
 
 """
 Simulate a 3D Ising decision model (IDM).
@@ -99,7 +99,7 @@ def drift_rate(y, deriv_free_energy, beta, D, Bs):
 
 
 def simulate(y_start, t_begin=0.0, t_end=0.002, dt=.0001, Bs=(8000, 8000,
-    8200), string_this_B="B"):
+    8200), string_this_B="B", stop=True):
     """
     simulates y_start for a given time interval.
 
@@ -134,6 +134,7 @@ def simulate(y_start, t_begin=0.0, t_end=0.002, dt=.0001, Bs=(8000, 8000,
     y = np.zeros((Nt, 3))
 
     y[0] = np.array(y_start)
+    res = False
     for i in xrange(1,Nt):
         if y[i-1][0] <= 0:
             print "WARNING y gets below zero"
@@ -158,14 +159,20 @@ def simulate(y_start, t_begin=0.0, t_end=0.002, dt=.0001, Bs=(8000, 8000,
                                     random.gauss(0,1),
                                     random.gauss(0,1))))
         if y[i][0] < 0.3 and y[i][1] < 0.3 and y[i][2] > 0.7:
-            res = ("plus", string_this_B, i)
-            break
+            if not res:
+                res = ("plus", string_this_B, i)
+            if stop:
+                break
         if y[i][0] < 0.3 and y[i][1] > 0.7 and y[i][2] < 0.3:
-            res = ("equal", string_this_B, i)
-            break
+            if not res:
+                res = ("equal", string_this_B, i)
+            if stop:
+                break
         if y[i][0] > 0.7 and y[i][1] < 0.3 and y[i][2] < 0.3:
-            res = ("minus", string_this_B, i)
-            break
+            if not res:
+                res = ("minus", string_this_B, i)
+            if stop:
+                break
     return (res, y)
 
 if __name__ == "__main__":
@@ -179,7 +186,7 @@ if __name__ == "__main__":
     responses = list()
     for i in range(len(starting_yy1)):
         res, y = simulate((starting_yy1[i], starting_yy2[i], starting_yy3[i]),
-                     t_begin=0.0, t_end=0.02, dt=.0001)
+                     t_begin=0.0, t_end=0.02, dt=.0001, stop=False)
         final_y.append(y)
         responses.append(res)
     final_y = np.array(final_y)

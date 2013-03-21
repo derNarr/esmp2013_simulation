@@ -1,3 +1,6 @@
 *.pyc
 *.pickle
+build/
+simulate_c.c
+simulate_c.so
 

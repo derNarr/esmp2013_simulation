@@ -12,10 +12,12 @@
 # output: --
 #
 # created 2013-02-01 KS
-# last mod 2013-03-21 11:29 KS
+# last mod 2013-03-21 13:13 KS
 
 """
 Compile cython files.
+
+python setup.py build_ext --inplace
 
 """
 

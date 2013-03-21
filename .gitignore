@@ -3,4 +3,6 @@
 build/
 simulate_c.c
 simulate_c.so
+*.npy
+*.csv
 

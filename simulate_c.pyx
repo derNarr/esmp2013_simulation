@@ -54,19 +54,22 @@ cdef deriv_free_energy(np.ndarray ys, np.ndarray Bs):
 
     """
     # 1/24 is beta hard coded
-    cdef np.float B1 = Bs[0]
-    cdef np.float B2 = Bs[1]
-    cdef np.float B3 = Bs[2]
-    cdef np.float y1 = ys[0]
-    cdef np.float y2 = ys[1]
-    cdef np.float y3 = ys[2]
+    cdef np.float B1 = np.float(Bs[0])
+    cdef np.float B2 = np.float(Bs[1])
+    cdef np.float B3 = np.float(Bs[2])
+    cdef np.float y1 = np.float(ys[0])
+    cdef np.float y2 = np.float(ys[1])
+    cdef np.float y3 = np.float(ys[2])
 
-    cdef np.float ans1 = (-B1 - 104000.0*y1 + 12000.0*y2 + 12000.0*y3 + 24000.0*np.log(y1) -
-            24000.0*np.log(-y1 + 1.0) + 52500.0)
-    cdef np.float ans2 = (-B2 + 12000.0*y1 - 104000.0*y2 + 12000.0*y3 + 24000.0*np.log(y2) -
-            24000.0*np.log(-y2 + 1.0) + 52500)
-    cdef np.float ans3 = (-B3 + 12000.0*y1 + 12000.0*y2 - 104000.0*y3 + 24000.0*np.log(y3) -
-            24000.0*np.log(-y3 + 1.0) + 52500.0)
+    cdef np.float ans1 = (-B1 - 104000.0*y1 + 12000.0*y2 + 12000.0*y3 +
+                          24000.0*np.float(np.log(y1)) -
+                          24000.0*np.float(np.log(-y1 + 1.0)) + 52500.0)
+    cdef np.float ans2 = (-B2 + 12000.0*y1 - 104000.0*y2 + 12000.0*y3 +
+                          24000.0*np.float(np.log(y2)) -
+                          24000.0*np.float(np.log(-y2 + 1.0)) + 52500)
+    cdef np.float ans3 = (-B3 + 12000.0*y1 + 12000.0*y2 - 104000.0*y3 +
+                          24000.0*np.float(np.log(y3)) -
+                          24000.0*np.float(np.log(-y3 + 1.0)) + 52500.0)
     cdef np.ndarray ans = np.array((ans1, ans2, ans3))
     return ans
 
@@ -102,15 +105,17 @@ def simulate(y_start, t_begin=0.0, t_end=0.002, dt=.0001, Bs=(8000, 8000, 8200))
         the res list contains pairs of (response, reaction time) and the ys array has shape (Nt, 3)
 
     """
+    cdef np.ndarray Bs2 = np.array(Bs, dtype=np.float)
     cdef np.ndarray t = np.arange(t_begin, t_end, dt)
-    cdef np.float Nt = t.size
+    cdef np.int Nt = t.size
     cdef np.float sigma = 0.10
     cdef np.float dt2 = 0.01
     cdef np.float D = 2*sigma**2/dt2
 
-    cdef np.float sqrtdt = np.sqrt(dt2)
+    cdef np.float sqrtdt = np.float(np.sqrt(dt2))
     cdef np.ndarray y = np.zeros((Nt, 3))
     res = list()
+    cdef np.ndarray noise
 
     y[0] = np.array(y_start)
     for i in xrange(1, Nt):
@@ -132,18 +137,13 @@ def simulate(y_start, t_begin=0.0, t_end=0.002, dt=.0001, Bs=(8000, 8000, 8200))
         if y[i-1][2] >= 1:
             print "WARNING y gets above one"
             y[i-1][2] = 0.9999
-        y[i] = (y[i-1] + dt*drift_rate(y[i-1], D, Bs) +
-                sigma*sqrtdt*np.array((np.random.gauss(0,1),
-                                    np.random.gauss(0,1),
-                                    np.random.gauss(0,1))))
+        noise = np.random.standard_normal(3)
+        y[i] = (y[i-1] + dt*drift_rate(y[i-1], D, Bs2) + sigma*sqrtdt*noise)
         if y[i][0] < 0.3 and y[i][1] < 0.3 and y[i][2] > 0.7:
-            res.append(("plus", i))
-            break
+            return ("plus", i)
         if y[i][0] < 0.3 and y[i][1] > 0.7 and y[i][2] < 0.3:
-            res.append(("equal", i))
-            break
+            return ("equal", i)
         if y[i][0] > 0.7 and y[i][1] < 0.3 and y[i][2] < 0.3:
-            res.append(("minus", i))
-            break
-    return res
+            return ("minus", i)
+    return ("not terminated", 0)
 

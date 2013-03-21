@@ -12,7 +12,7 @@
 # output: --
 #
 # created 2013-03-18 KS
-# last mod 2013-03-20 10:43 KS
+# last mod 2013-03-21 11:48 KS
 
 """
 Simulate a 3D Ising decision model (IDM).
@@ -98,7 +98,8 @@ def drift_rate(y, deriv_free_energy, beta, D, Bs):
     return -beta * D * deriv_free_energy(y, beta, Bs)
 
 
-def simulate(y_start, t_begin=0.0, t_end=0.002, dt=.0001, Bs=(8000, 8000, 8200), string_this_B = "B"):
+def simulate(y_start, t_begin=0.0, t_end=0.002, dt=.0001, Bs=(8000, 8000,
+    8200), string_this_B="B"):
     """
     simulates y_start for a given time interval.
 
@@ -131,7 +132,7 @@ def simulate(y_start, t_begin=0.0, t_end=0.002, dt=.0001, Bs=(8000, 8000, 8200),
     drate1 = functools.partial(drift_rate, deriv_free_energy=dfe, beta=1/24, D=D, Bs=Bs)
     sqrtdt = math.sqrt(dt2)
     y = np.zeros((Nt, 3))
-    
+
     y[0] = np.array(y_start)
     for i in xrange(1,Nt):
         if y[i-1][0] <= 0:

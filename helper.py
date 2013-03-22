@@ -12,7 +12,7 @@
 # output: --
 #
 # created 2013-03-20 KS
-# last mod 2013-03-20 09:10 KS
+# last mod 2013-03-22 09:43 KS
 
 """
 Helper functions mostly for convenience.
@@ -35,13 +35,13 @@ def plot(ys):
     ax.set_zlim3d(0, 1)
     plt.show()
 
-def plot2(ys, fig):
+def plot2(ys, fig, c="b"):
     """
     make a nice 3D plot for ys as a line.
 
     """
     ax = fig.gca(projection='3d')
-    ax.plot(ys[:,0], ys[:,1], ys[:,2])
+    ax.plot(ys[:,0], ys[:,1], ys[:,2], c=c)
     ax.set_xlim3d(0, 1)
     ax.set_ylim3d(0, 1)
     ax.set_zlim3d(0, 1)

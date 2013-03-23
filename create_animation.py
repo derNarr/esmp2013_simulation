@@ -12,7 +12,7 @@
 # output: --
 #
 # created 2012-12-23 KS
-# last mod 2013-03-22 14:23 KS
+# last mod 2013-03-22 17:37 KS
 
 from __future__ import division
 
@@ -42,7 +42,7 @@ def set_title(title):
         ax.set_zlim3d((0, 1))
         ax.title.set_text(title)
         ax.set_xlabel('Audio first')
-        ax.set_ylabel('Synchroneous')
+        ax.set_ylabel('Synchronous')
         ax.set_zlabel('Video first')
 
 ANGLE1 = 60
@@ -55,11 +55,11 @@ def animate(k):
         for j, y in enumerate(ys):
             y_seg = y[0:2]
             plot2(y_seg, fig, cm.spectral(j/len(ys)))
-        set_title("Decision Space")
         ax.scatter(0.16, 0.16, 0.16, c="g", alpha=0.4, s=500)
         ax.scatter(0.82, 0.17, 0.17, c="b", alpha=0.4, s=500)
         ax.scatter(0.17, 0.82, 0.17, c="r", alpha=0.4, s=500)
         ax.scatter(0.17, 0.17, 0.82, c="k", alpha=0.4, s=500)
+        set_title("Decision Space")
     if i > 0 and i < N:# ys.shape[1]:
         ax.view_init(20, 215+ANGLE1*k/N/3)
         for j, y in enumerate(ys):
@@ -76,7 +76,7 @@ def main():
     frames = int(ANGLE2/3) + 3*N # + ys.shape[1]
     print frames
     anim = animation.FuncAnimation(fig, animate, frames=frames)
-    anim.save("animation.mp4", fps=30, codec="mpeg4", bitrate=2000)
+    anim.save("animation.mp4", fps=20, codec="mpeg4", bitrate=2000)
 
 if __name__ == "__main__":
     main()
